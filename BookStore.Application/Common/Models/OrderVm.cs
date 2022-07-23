@@ -1,6 +1,6 @@
 using BookStore.Domain.Common.Enums;
 
-namespace BookStore.Application.Customers.Models;
+namespace BookStore.Application.Common.Models;
 
 public class OrderVm
 {

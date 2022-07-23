@@ -1,7 +1,7 @@
 using AutoMapper;
 using BookStore.Application.Common.Exceptions;
 using BookStore.Application.Common.Interfaces;
-using BookStore.Application.Customers.Models;
+using BookStore.Application.Common.Models;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-using BookStore.Application.Customers.Models;
+using BookStore.Application.Common.Models;
 using MediatR;
 
 namespace BookStore.Application.Customers.Commands.UpdateCustomer;

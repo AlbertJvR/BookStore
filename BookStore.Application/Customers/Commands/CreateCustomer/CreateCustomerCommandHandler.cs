@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BookStore.Application.Customers.Commands.CreateCustomer;
 
-public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, Unit>
+public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, long>
 {
     private readonly IBookStoreDbContext _context;
     private readonly IMapper _mapper;
@@ -16,13 +16,13 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     
-    public async Task<Unit> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
         var newCustomer = _mapper.Map<Customer>(request);
 
         await _context.Customers.AddAsync(newCustomer, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-         return Unit.Value;
+         return newCustomer.Id;
     }
 }

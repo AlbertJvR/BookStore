@@ -1,7 +1,7 @@
 using AutoMapper;
+using BookStore.Application.Common.Models;
 using BookStore.Application.Customers.Commands.CreateCustomer;
 using BookStore.Application.Customers.Commands.UpdateCustomer;
-using BookStore.Application.Customers.Models;
 using BookStore.Domain.Entities;
 
 namespace BookStore.Application.Common.Mappings;
