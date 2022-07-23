@@ -34,10 +34,10 @@ public class AddressValidator : AbstractValidator<AddressVm>
             .NotEmpty()
             .WithMessage($"Please provide a valid {nameof(AddressVm.AddressLine1)}")
             .MinimumLength(2)
-            .WithMessage($"Please provide a {nameof(AddressVm.AddressLine2)} longer than 2 characters.");
-        When(x => !string.IsNullOrEmpty(x.AddressLine2), () =>
+            .WithMessage($"Please provide a {nameof(AddressVm.AddressLine1)} longer than 2 characters.");
+        When(x => !string.IsNullOrWhiteSpace(x.AddressLine2), () =>
         {
-            RuleFor(x => x.AddressLine1)
+            RuleFor(x => x.AddressLine2)
                 .MinimumLength(2)
                 .WithMessage($"Please provide a {nameof(AddressVm.AddressLine2)} longer than 2 characters.");
         });
