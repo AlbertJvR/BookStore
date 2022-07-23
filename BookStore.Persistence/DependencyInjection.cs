@@ -11,7 +11,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddDbContext<BookStoreDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("BookStore")));
+            options.UseNpgsql(configuration.GetConnectionString("BookStoreDatabase")));
         
         // If you remove this interface, the below registration is unnecessary as 'AddDbContext' registers with the DI,
         // and adding this again will cause weird behaviour and all exceptions are annoyingly swallowed

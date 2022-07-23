@@ -32,7 +32,7 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
     {
         var info = new OpenApiInfo
         {
-            Title = "File Generation Api",
+            Title = "Book Store Api",
             Version = description.ApiVersion.ToString()
         };
 
