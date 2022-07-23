@@ -10,13 +10,16 @@ public class ApplicationMappingProfile : Profile
 {
     public ApplicationMappingProfile()
     {
-        CreateMap<AddressVm, Address>().ReverseMap();
-        CreateMap<List<AddressVm>, List<Address>>().ReverseMap();
-        CreateMap<Customer, CustomerVm>().ReverseMap();
-        CreateMap<OrderVm, Order>().ReverseMap();
-        CreateMap<List<OrderVm>, List<Order>>().ReverseMap();
-        CreateMap<OrderItemVm, OrderItem>().ReverseMap();
-        CreateMap<List<OrderItemVm>, List<OrderItem>>().ReverseMap();
+        CreateMap<AddressVm, Address>()
+            .ForMember(d => d.Customers, c => c.Ignore())
+            .ReverseMap();
+        CreateMap<Customer, CustomerVm>()
+            .ForMember(d => d.Orders, c => c.Ignore())
+            .ReverseMap();
+        CreateMap<OrderVm, Order>()
+            .ReverseMap();
+        CreateMap<OrderItemVm, OrderItem>()
+            .ReverseMap();
         
         CreateMap<CreateCustomerCommand, Customer>().ReverseMap();
         CreateMap<UpdateCustomerDetailsCommand, UpdateCustomerRequest>().ReverseMap();
