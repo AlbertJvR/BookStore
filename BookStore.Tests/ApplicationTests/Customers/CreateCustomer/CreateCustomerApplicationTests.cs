@@ -128,12 +128,17 @@ public class CreateCustomerApplicationTests
     [ClassData(typeof(CreateCustomerTheoryData))]
     public async Task CreateCustomerCommand_SuccessfulCreate(CreateCustomerCommand command)
     {
+        // Create the handler
         var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
 
+        // Perform the create operation
         var newCustomerId = await generatePdfCommandHandler.Handle(command, CancellationToken.None);
+        
+        // Query the in memory db for the record that should have been created above. I used first as it should exception if this did not work.
         var createdCustomer = await _sharedTestFixture.BookStoreDbContext.Customers
             .FirstAsync(x => x.Id == newCustomerId, CancellationToken.None);
         
+        // Ensure that what was created is what we sent in via the command
         createdCustomer.FirstName.ShouldMatch(command.FirstName);
         createdCustomer.Surname.ShouldMatch(command.Surname);
 
