@@ -10,6 +10,7 @@ using BookStore.Application.Common.Models;
 using BookStore.Application.Customers.Commands.CreateCustomer;
 using BookStore.Tests.Common;
 using FluentValidation;
+using FluentValidation.TestHelper;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Shouldly;
@@ -22,6 +23,8 @@ public class CreateCustomerApplicationTests
 {
     private readonly SharedTestFixture _sharedTestFixture;
     private readonly IMapper _mapper;
+    private readonly CreateCustomerCommandValidator _createCustomerValidator;
+    private readonly AddressValidator _addressValidator;
 
     public CreateCustomerApplicationTests(SharedTestFixture sharedTestFixture)
     {
@@ -32,6 +35,8 @@ public class CreateCustomerApplicationTests
             cfg.AddProfile(new ApplicationMappingProfile());
         });
         _mapper = mockMapper.CreateMapper();
+        _createCustomerValidator = new CreateCustomerCommandValidator();
+        _addressValidator = new AddressValidator();
     }
 
     [Theory]
@@ -39,26 +44,9 @@ public class CreateCustomerApplicationTests
     public async Task CreateCustomerCommand_FirstNameValid(CreateCustomerCommand command)
     {
         command.FirstName = string.Empty;
-        
-        var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
-        var validationBehavior = new RequestValidationBehavior<CreateCustomerCommand, long>(new List<CreateCustomerCommandValidator>
-        {
-            new CreateCustomerCommandValidator()
-        });
-        
 
-        Task task() => validationBehavior.Handle(command, CancellationToken.None, () =>
-        {
-            return generatePdfCommandHandler.Handle(command, CancellationToken.None);
-        });
-        
-        var exception = await Assert.ThrowsAsync<ValidationException>(task);
-
-        exception.Errors.ShouldNotBeNull();
-        var errors = exception.Errors.ToList();
-
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a valid FirstName").ShouldNotBeNull();
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a FirstName longer than 2 characters.").ShouldNotBeNull();
+        var result = await _createCustomerValidator.TestValidateAsync(command);
+        result.ShouldHaveValidationErrorFor(x => x.FirstName).Only();
     }
     
     [Theory]
@@ -67,25 +55,8 @@ public class CreateCustomerApplicationTests
     {
         command.Surname = string.Empty;
         
-        var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
-        var validationBehavior = new RequestValidationBehavior<CreateCustomerCommand, long>(new List<CreateCustomerCommandValidator>
-        {
-            new CreateCustomerCommandValidator()
-        });
-        
-
-        Task task() => validationBehavior.Handle(command, CancellationToken.None, () =>
-        {
-            return generatePdfCommandHandler.Handle(command, CancellationToken.None);
-        });
-        
-        var exception = await Assert.ThrowsAsync<ValidationException>(task);
-
-        exception.Errors.ShouldNotBeNull();
-        var errors = exception.Errors.ToList();
-
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a valid Surname").ShouldNotBeNull();
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a Surname longer than 2 characters.").ShouldNotBeNull();
+        var result = await _createCustomerValidator.TestValidateAsync(command);
+        result.ShouldHaveValidationErrorFor(x => x.Surname).Only();
     }
     
     [Theory]
@@ -94,158 +65,63 @@ public class CreateCustomerApplicationTests
     {
         command.Addresses = new List<AddressVm>();
         
-        var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
-        var validationBehavior = new RequestValidationBehavior<CreateCustomerCommand, long>(new List<CreateCustomerCommandValidator>
-        {
-            new CreateCustomerCommandValidator()
-        });
-        
-
-        Task task() => validationBehavior.Handle(command, CancellationToken.None, () =>
-        {
-            return generatePdfCommandHandler.Handle(command, CancellationToken.None);
-        });
-        
-        var exception = await Assert.ThrowsAsync<ValidationException>(task);
-
-        exception.Errors.ShouldNotBeNull();
-        var errors = exception.Errors.ToList();
-
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide at least 1 Address").ShouldNotBeNull();
+        var result = await _createCustomerValidator.TestValidateAsync(command);
+        result.ShouldHaveValidationErrorFor(x => x.Addresses).Only();
     }
     
     [Theory]
     [ClassData(typeof(CreateCustomerTheoryData))]
     public async Task CreateCustomerCommand_AddressLine1Valid(CreateCustomerCommand command)
     {
-        command.Addresses.First().AddressLine1 = string.Empty;
+        var address = command.Addresses.First();
+        address.AddressLine1 = string.Empty;
         
-        var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
-        var validationBehavior = new RequestValidationBehavior<CreateCustomerCommand, long>(new List<CreateCustomerCommandValidator>
-        {
-            new CreateCustomerCommandValidator()
-        });
-        
-
-        Task task() => validationBehavior.Handle(command, CancellationToken.None, () =>
-        {
-            return generatePdfCommandHandler.Handle(command, CancellationToken.None);
-        });
-        
-        var exception = await Assert.ThrowsAsync<ValidationException>(task);
-
-        exception.Errors.ShouldNotBeNull();
-        var errors = exception.Errors.ToList();
-
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a valid AddressLine1").ShouldNotBeNull();
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a AddressLine1 longer than 2 characters.").ShouldNotBeNull();
+        var result = await _addressValidator.TestValidateAsync(address);
+        result.ShouldHaveValidationErrorFor(x => x.AddressLine1).Only();
     }
     
     [Theory]
     [ClassData(typeof(CreateCustomerTheoryData))]
     public async Task CreateCustomerCommand_AddressLine2Valid(CreateCustomerCommand command)
     {
-        command.Addresses.First().AddressLine2 = "a";
+        var address = command.Addresses.First();
+        address.AddressLine2 = "a";
         
-        var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
-        var validationBehavior = new RequestValidationBehavior<CreateCustomerCommand, long>(new List<CreateCustomerCommandValidator>
-        {
-            new CreateCustomerCommandValidator()
-        });
-        
-
-        Task task() => validationBehavior.Handle(command, CancellationToken.None, () =>
-        {
-            return generatePdfCommandHandler.Handle(command, CancellationToken.None);
-        });
-        
-        var exception = await Assert.ThrowsAsync<ValidationException>(task);
-
-        exception.Errors.ShouldNotBeNull();
-        var errors = exception.Errors.ToList();
-
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a AddressLine2 longer than 2 characters.").ShouldNotBeNull();
+        var result = await _addressValidator.TestValidateAsync(address);
+        result.ShouldHaveValidationErrorFor(x => x.AddressLine2).Only();
     }
     
     [Theory]
     [ClassData(typeof(CreateCustomerTheoryData))]
     public async Task CreateCustomerCommand_AddressSuburbValid(CreateCustomerCommand command)
     {
-        command.Addresses.First().Suburb = string.Empty;
+        var address = command.Addresses.First();
+        address.Suburb = string.Empty;
         
-        var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
-        var validationBehavior = new RequestValidationBehavior<CreateCustomerCommand, long>(new List<CreateCustomerCommandValidator>
-        {
-            new CreateCustomerCommandValidator()
-        });
-        
-
-        Task task() => validationBehavior.Handle(command, CancellationToken.None, () =>
-        {
-            return generatePdfCommandHandler.Handle(command, CancellationToken.None);
-        });
-        
-        var exception = await Assert.ThrowsAsync<ValidationException>(task);
-
-        exception.Errors.ShouldNotBeNull();
-        var errors = exception.Errors.ToList();
-
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a valid Suburb").ShouldNotBeNull();
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a Suburb longer than 2 characters.").ShouldNotBeNull();
+        var result = await _addressValidator.TestValidateAsync(address);
+        result.ShouldHaveValidationErrorFor(x => x.Suburb).Only();
     }
     
     [Theory]
     [ClassData(typeof(CreateCustomerTheoryData))]
     public async Task CreateCustomerCommand_AddressCityValid(CreateCustomerCommand command)
     {
-        command.Addresses.First().City = string.Empty;
+        var address = command.Addresses.First();
+        address.City = string.Empty;
         
-        var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
-        var validationBehavior = new RequestValidationBehavior<CreateCustomerCommand, long>(new List<CreateCustomerCommandValidator>
-        {
-            new CreateCustomerCommandValidator()
-        });
-        
-
-        Task task() => validationBehavior.Handle(command, CancellationToken.None, () =>
-        {
-            return generatePdfCommandHandler.Handle(command, CancellationToken.None);
-        });
-        
-        var exception = await Assert.ThrowsAsync<ValidationException>(task);
-
-        exception.Errors.ShouldNotBeNull();
-        var errors = exception.Errors.ToList();
-
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a valid City").ShouldNotBeNull();
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a City longer than 2 characters.").ShouldNotBeNull();
+        var result = await _addressValidator.TestValidateAsync(address);
+        result.ShouldHaveValidationErrorFor(x => x.City).Only();
     }
     
     [Theory]
     [ClassData(typeof(CreateCustomerTheoryData))]
     public async Task CreateCustomerCommand_AddressPostalCodeValid(CreateCustomerCommand command)
     {
-        command.Addresses.First().PostalCode = string.Empty;
+        var address = command.Addresses.First();
+        address.PostalCode = string.Empty;
         
-        var generatePdfCommandHandler = new CreateCustomerCommandHandler(_sharedTestFixture.BookStoreDbContext, _mapper);
-        var validationBehavior = new RequestValidationBehavior<CreateCustomerCommand, long>(new List<CreateCustomerCommandValidator>
-        {
-            new CreateCustomerCommandValidator()
-        });
-        
-
-        Task task() => validationBehavior.Handle(command, CancellationToken.None, () =>
-        {
-            return generatePdfCommandHandler.Handle(command, CancellationToken.None);
-        });
-        
-        var exception = await Assert.ThrowsAsync<ValidationException>(task);
-
-        exception.Errors.ShouldNotBeNull();
-        var errors = exception.Errors.ToList();
-
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a valid PostalCode").ShouldNotBeNull();
-        errors.FirstOrDefault(x => x.ErrorMessage == "Please provide a PostalCode longer than 4 characters.").ShouldNotBeNull();
+        var result = await _addressValidator.TestValidateAsync(address);
+        result.ShouldHaveValidationErrorFor(x => x.PostalCode).Only();
     }
     
     [Theory]
