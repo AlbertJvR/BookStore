@@ -28,5 +28,11 @@ public class ValidationException : Exception
         }
     }
 
+    public ValidationException(string property, string errorMessage)
+        : this()
+    {
+        Failures.Add(property, new []{ errorMessage });
+    }
+
     public IDictionary<string, string[]> Failures { get; }
 }

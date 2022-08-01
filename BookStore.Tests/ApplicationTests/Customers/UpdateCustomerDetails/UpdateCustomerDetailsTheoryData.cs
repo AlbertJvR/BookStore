@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using AutoMapper;
 using BookStore.Application.Common.Mappings;
-using BookStore.Application.Customers.Commands.CreateCustomer;
+using BookStore.Application.Customers.Commands.UpdateCustomer;
 using BookStore.Domain.Entities;
 using Xunit;
 
-namespace BookStore.Tests.ApplicationTests.Customers.CreateCustomer;
+namespace BookStore.Tests.ApplicationTests.Customers.UpdateCustomerDetails;
 
-public class CreateCustomerTheoryData : TheoryData<CreateCustomerCommand>
+public class UpdateCustomerDetailsTheoryData : TheoryData<UpdateCustomerDetailsCommand>
 {
-    public CreateCustomerTheoryData()
+    public UpdateCustomerDetailsTheoryData()
     {
         var mapperConfiguration = new MapperConfiguration(cfg =>
         {
@@ -18,11 +18,11 @@ public class CreateCustomerTheoryData : TheoryData<CreateCustomerCommand>
         var mapper = mapperConfiguration.CreateMapper();
 
         var customers = CustomerFaker.Factory.CreateCustomers(5);
-        var commands = mapper.Map<ICollection<Customer>, ICollection<CreateCustomerCommand>>(customers);
+        var commands = mapper.Map<ICollection<Customer>, ICollection<UpdateCustomerDetailsCommand>>(customers);
         
         foreach (var command in commands)
         {
             Add(command);
-        }   
+        }
     }
 }

@@ -20,8 +20,13 @@ public class ApplicationMappingProfile : Profile
             .ReverseMap();
         CreateMap<OrderItemVm, OrderItem>()
             .ReverseMap();
-        
-        CreateMap<CreateCustomerCommand, Customer>().ReverseMap();
+        CreateMap<CreateCustomerCommand, Customer>()
+            .ForMember(d => d.Id, c => c.Ignore())
+            .ForMember(d => d.Orders, c => c.Ignore())
+            .ReverseMap();
+        CreateMap<UpdateCustomerDetailsCommand, Customer>()
+            .ForMember(d => d.Id, c => c.Ignore())
+            .ReverseMap();
         CreateMap<UpdateCustomerDetailsCommand, UpdateCustomerRequest>().ReverseMap();
     }
 }

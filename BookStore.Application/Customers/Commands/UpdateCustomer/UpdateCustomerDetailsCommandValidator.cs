@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace BookStore.Application.Customers.Commands.UpdateCustomer;
 
-public class UpdateCustomerCommandValidator : AbstractValidator<UpdateCustomerDetailsCommand>
+public class UpdateCustomerDetailsCommandValidator : AbstractValidator<UpdateCustomerDetailsCommand>
 {
-    public UpdateCustomerCommandValidator()
+    public UpdateCustomerDetailsCommandValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()
@@ -41,7 +41,7 @@ public class AddressValidator : AbstractValidator<AddressVm>
             .WithMessage($"Please provide a {nameof(AddressVm.AddressLine2)} longer than 2 characters.");
         When(x => !string.IsNullOrEmpty(x.AddressLine2), () =>
         {
-            RuleFor(x => x.AddressLine1)
+            RuleFor(x => x.AddressLine2)
                 .MinimumLength(2)
                 .WithMessage($"Please provide a {nameof(AddressVm.AddressLine2)} longer than 2 characters.");
         });
