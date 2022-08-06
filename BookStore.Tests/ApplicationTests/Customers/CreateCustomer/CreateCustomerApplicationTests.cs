@@ -10,7 +10,6 @@ using BookStore.Application.Customers.Commands.CreateCustomer;
 using BookStore.Tests.Common;
 using FluentValidation.TestHelper;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using Shouldly;
 using Xunit;
 
