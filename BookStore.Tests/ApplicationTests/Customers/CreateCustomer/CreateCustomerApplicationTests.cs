@@ -27,7 +27,6 @@ public class CreateCustomerApplicationTests
     public CreateCustomerApplicationTests(SharedTestFixture sharedTestFixture)
     {
         _sharedTestFixture = sharedTestFixture ?? throw new ArgumentNullException(nameof(sharedTestFixture));
-        _mapper = Mock.Of<IMapper>();
         var mockMapper = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile(new ApplicationMappingProfile());
