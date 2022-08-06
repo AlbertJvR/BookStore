@@ -10,7 +10,7 @@ public static class AddressFaker
     {
         var faker = new Faker<Address>()
             .RuleFor(x => x.AddressLine1, f => f.Address.StreetAddress())
-            .RuleFor(x => x.AddressLine2, f => f.Lorem.Word())
+            .RuleFor(x => x.AddressLine2, f => f.Random.Words(4))
             .RuleFor(x => x.Suburb, f => f.Lorem.Word())
             .RuleFor(x => x.City, f => f.Address.City())
             .RuleFor(x => x.PostalCode, f => f.Address.ZipCode())
